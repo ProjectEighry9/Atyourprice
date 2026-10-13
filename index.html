@@ -161,6 +161,9 @@ section[id],form[id]{scroll-margin-top:84px}
 /* phone bar */
 .mbar{display:none}
 
+/* strip shown only on the draft address */
+.draft-note{background:#0e0f12;color:var(--muted);font-size:12.5px;text-align:center;padding:7px 16px;border-bottom:1px solid var(--line)}
+
 @media (max-width:980px){
   .nav{display:none}
   .hero{padding:48px 0 64px}
@@ -548,6 +551,18 @@ section[id],form[id]{scroll-margin-top:84px}
   var pad = function (n) { return String(n).padStart(2, '0'); };
   date.min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
   document.getElementById('year').textContent = now.getFullYear();
+
+  // On the GitHub Pages address the page is a draft: say so, and keep it out of search results.
+  if (/\.github\.io$/.test(location.hostname)) {
+    var robots = document.createElement('meta');
+    robots.name = 'robots';
+    robots.content = 'noindex';
+    document.head.appendChild(robots);
+    var strip = document.createElement('div');
+    strip.className = 'draft-note';
+    strip.textContent = 'Draft design preview. The live site is atyourprice.co.uk';
+    document.body.insertBefore(strip, document.body.firstChild);
+  }
 
   // Until the form is connected to a server, a request is handed to the visitor's own email app.
   form.addEventListener('submit', function (e) {
