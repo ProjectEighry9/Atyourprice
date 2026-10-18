@@ -179,6 +179,11 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 .cta h2{font-size:clamp(38px,5vw,64px)}
 .cta h2 em{color:var(--brass-2)}
 .cta .cta-row{margin-top:0}
+.cta-contact{display:flex;flex-wrap:wrap;gap:16px 56px;margin-top:30px}
+.cta-contact li{display:flex;flex-direction:column;gap:5px;min-width:0}
+.cta-contact span{font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-2)}
+.cta-contact a{font-family:var(--display);font-size:clamp(19px,2.2vw,25px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.cta-contact a:hover{color:var(--brass-2)}
 
 /* footer */
 .foot{background:var(--paper-2);padding:64px 0 32px;font-size:15px}
@@ -528,10 +533,16 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 
   <section class="cta" id="contact">
     <div class="wrap cta-in">
-      <h2 class="display">Moving soon? <em>Name your price.</em></h2>
+      <div>
+        <h2 class="display">Moving soon? <em>Name your price.</em></h2>
+        <ul class="cta-contact">
+          <li><span>Phone</span><a href="tel:+447442248222">07442 248222</a></li>
+          <li><span>Email</span><a href="mailto:info@atyourprice.co.uk">info@atyourprice.co.uk</a></li>
+        </ul>
+      </div>
       <div class="cta-row">
         <a class="btn btn-brass" href="#order">Give us your price</a>
-        <a class="btn btn-line-light" href="tel:+447442248222">Call 07442 248222</a>
+        <a class="btn btn-line-light" href="tel:+447442248222">Call us</a>
       </div>
     </div>
   </section>
