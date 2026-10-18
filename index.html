@@ -32,6 +32,11 @@ ul,ol{padding:0;list-style:none}
 .eyebrow{display:flex;align-items:center;gap:12px;color:var(--brass);font-weight:700;font-size:12.5px;letter-spacing:.2em;text-transform:uppercase}
 .eyebrow::before{content:"";width:28px;height:1px;background:var(--brass)}
 
+/* an optional printed-paper grain, switched on with data-texture on the root */
+:root[data-texture]{--grain:.4}
+:root[data-texture="news"]{--paper:#F1EDE1;--paper-2:#E7E2D3;--card:#F8F5EC;--grain:.78}
+:root[data-texture]::after{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;mix-blend-mode:multiply;opacity:var(--grain);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E") repeat;background-size:220px 220px}
+
 /* the minute track of a dial, used as a divider */
 .track{height:12px;background:
   repeating-linear-gradient(90deg,var(--brass) 0 1px,transparent 1px 60px) left bottom/100% 12px no-repeat,
