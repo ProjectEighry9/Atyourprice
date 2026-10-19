@@ -79,8 +79,11 @@ ul,ol{padding:0;list-style:none}
 .facts li{padding:0 18px;border-left:1px solid var(--line)}
 .facts li:first-child{padding-left:0;border-left:0}
 .dial-wrap{display:grid;justify-items:center;gap:18px}
-.dial{width:min(100%,230px);height:auto}
-.dial text{font-family:var(--display)}
+/* the engraved plate, with the working dial laid exactly over the blank face in the picture */
+.clockshot{position:relative;margin:0;width:min(100%,440px);line-height:0}
+.clockshot img{width:100%;height:auto;mix-blend-mode:multiply}
+.clockshot-face{position:absolute;left:50.49%;top:26.23%;width:20.73%;height:auto;transform:translate(-50%,-50%)}
+.clockshot-face text{font-family:var(--display);font-weight:600}
 .dial-cap{font-family:var(--display);font-style:italic;font-size:18px;text-align:center;max-width:19em;line-height:1.5;text-wrap:balance}
 .dial-cap .pair{white-space:nowrap}
 .dial-cap mark{background:none;color:var(--brass);font-style:normal;font-weight:700;font-size:1.34em;letter-spacing:.005em;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em;text-decoration-color:rgba(169,130,58,.45)}
@@ -213,7 +216,7 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 @media (max-width:900px){
   .hero{padding:48px 0 64px}
   .hero-in,.order-in,.about-in{grid-template-columns:minmax(0,1fr);gap:44px}
-  .dial{width:min(52%,180px)}
+  .clockshot{width:min(92%,380px)}
   .order-side{position:static}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .reviews{grid-template-columns:minmax(0,1fr);gap:32px}
@@ -283,56 +286,30 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
       </div>
 
       <div class="dial-wrap">
-        <!-- a platform clock hung from its bracket with the lamp beneath, as on an old station; the registered mark itself stays in the header, untouched -->
-        <svg class="dial" viewBox="0 0 300 400" role="img" aria-label="An old station platform clock hanging above its lamp, keeping London time">
-          <g fill="#1B1D1A">
-            <rect x="108" y="0" width="84" height="13" rx="3"/>
-            <rect x="141" y="11" width="18" height="40"/>
-            <rect x="132" y="45" width="36" height="11" rx="3"/>
-          </g>
-          <circle cx="150" cy="158" r="104" fill="#1B1D1A"/>
-          <circle cx="150" cy="158" r="93" fill="#A9823A"/>
-          <circle cx="150" cy="158" r="88" fill="#C9A45A"/>
-          <circle cx="150" cy="158" r="84" fill="#FBFAF6"/>
-          <g transform="rotate(-90 150 158)" fill="none" stroke="#1B1D1A">
-            <circle cx="150" cy="158" r="75" stroke-width="5" stroke-dasharray="1 6.854" stroke-dashoffset="0.5"/>
-            <circle cx="150" cy="158" r="74" stroke-width="9" stroke-dasharray="2.6 36.126" stroke-dashoffset="1.3"/>
-          </g>
-          <g font-size="12.5" text-anchor="middle" fill="#1B1D1A">
-            <text x="150" y="108">XII</text>
-            <text x="177" y="115">I</text>
-            <text x="197" y="135">II</text>
-            <text x="205" y="162">III</text>
-            <text x="197" y="190">IV</text>
-            <text x="177" y="210">V</text>
-            <text x="150" y="217">VI</text>
-            <text x="123" y="210">VII</text>
-            <text x="103" y="190">VIII</text>
-            <text x="95" y="162">IX</text>
-            <text x="103" y="135">X</text>
-            <text x="123" y="115">XI</text>
-          </g>
-          <g transform="translate(150 158)">
-            <g id="hand-hour" transform="rotate(305)"><path d="M-4 9 L-2.5 -44 L0 -51 L2.5 -44 L4 9 Z" fill="#1B1D1A"/></g>
-            <g id="hand-minute" transform="rotate(60)"><path d="M-3 10 L-2 -66 L0 -73 L2 -66 L3 10 Z" fill="#1B1D1A"/></g>
-            <g id="hand-second">
-              <path d="M0 17V-74" stroke="#A9823A" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cy="19" r="4" fill="#A9823A"/>
+        <!-- an engraved street at night; the clock face is blank in the picture and the working dial is laid over it -->
+        <figure class="clockshot">
+          <img src="clock-night.jpg" alt="An engraving of a Mercedes Sprinter coming up a London street at night, towards a clock hanging from a cast-iron post" width="820" height="1018">
+          <svg class="clockshot-face" viewBox="0 0 100 100" role="img" aria-label="The clock on the post keeps London time">
+            <g transform="rotate(-90 50 50)" fill="none" stroke="#1B1D1A">
+              <circle cx="50" cy="50" r="44.5" stroke-width="2.4" stroke-dasharray="0.55 4.11" stroke-dashoffset="0.28"/>
+              <circle cx="50" cy="50" r="43" stroke-width="6" stroke-dasharray="1.7 20.815" stroke-dashoffset="0.85"/>
             </g>
-            <circle r="5" fill="#1B1D1A"/>
-            <circle r="2" fill="#A9823A"/>
-          </g>
-          <!-- the lamp slung under the clock -->
-          <rect x="142" y="258" width="16" height="18" fill="#1B1D1A"/>
-          <path d="M150 272 L197 307 L103 307 Z" fill="#1B1D1A"/>
-          <path d="M111 307 H189 L181 364 H119 Z" fill="#F6ECD6" stroke="#1B1D1A" stroke-width="4" stroke-linejoin="round"/>
-          <g stroke="#1B1D1A" stroke-width="2.6" fill="none">
-            <path d="M132 307 L128 364M150 307v57M168 307 L172 364M114 336H186"/>
-          </g>
-          <rect x="113" y="361" width="74" height="10" rx="3" fill="#1B1D1A"/>
-          <path d="M150 371v11" stroke="#1B1D1A" stroke-width="7"/>
-          <circle cx="150" cy="387" r="6" fill="#1B1D1A"/>
-        </svg>
+            <g text-anchor="middle" fill="#1B1D1A" font-size="8" letter-spacing="0.6">
+              <text x="50" y="31">AT YOUR</text>
+              <text x="50" y="41">PRICE</text>
+            </g>
+            <g transform="translate(50 50)">
+              <g id="hand-hour"><path d="M-2.4 5 L-1.5 -23 L0 -27 L1.5 -23 L2.4 5 Z" fill="#1B1D1A"/></g>
+              <g id="hand-minute"><path d="M-1.8 6 L-1.1 -35 L0 -39 L1.1 -35 L1.8 6 Z" fill="#1B1D1A"/></g>
+              <g id="hand-second">
+                <path d="M0 9V-40" stroke="#A9823A" stroke-width="0.9" stroke-linecap="round"/>
+                <circle cy="10" r="2.2" fill="#A9823A"/>
+              </g>
+              <circle r="2.6" fill="#1B1D1A"/>
+              <circle r="1" fill="#A9823A"/>
+            </g>
+          </svg>
+        </figure>
         <p class="dial-cap">Every price gets a <span class="pair"><mark>yes</mark> or <mark>no</mark></span> within the hour.</p>
       </div>
     </div>
