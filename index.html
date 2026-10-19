@@ -217,6 +217,9 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
   .hero{padding:48px 0 64px}
   .hero-in,.order-in,.about-in{grid-template-columns:minmax(0,1fr);gap:44px}
   .clockshot{width:min(58%,215px)}
+  /* on a phone the two plates stack into a wall of pictures, so the bridge stands down
+     and the clock, which carries the mark and the time, stays. Being hidden and lazy, it never downloads. */
+  .plate{display:none}
   .order-side{position:static}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .reviews{grid-template-columns:minmax(0,1fr);gap:32px}
