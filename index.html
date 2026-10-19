@@ -154,6 +154,7 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 .agree a{text-decoration:underline;text-underline-offset:2px}
 .form .btn{width:100%;margin-top:22px;min-height:56px;font-size:16.5px}
 .form-note{font-size:14.5px;font-weight:600;color:var(--green);margin-top:12px;min-height:1px}
+.form-note.bad{color:#8C2F23}
 
 /* the engraved plate: its own paper tone multiplies into ours, so it sits on the page rather than on top of it */
 .plate figure{margin:0}
@@ -600,10 +601,19 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
   <a class="btn btn-green" href="#order">Name your price</a>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 (function () {
   var form = document.getElementById('order-form');
   var note = form.querySelector('.form-note');
+  var submitBtn = form.querySelector('button[type=submit]');
+
+  // The booking database: a publishable key only ever allows a new row to be
+  // inserted here, never read back, changed or deleted — see the office panel for that.
+  var supabase = window.supabase && window.supabase.createClient(
+    'https://ewovlfzoogiqbpllkrsf.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3b3ZsZnpvb2dpcWJwbGxrcnNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MzEwNjgsImV4cCI6MjEwODAwNzA2OH0.TCbMBehb7lop0dgPW_Ncesz1uTotIFlzwbb21nmgRx0'
+  );
   var now = new Date();
   var pad = function (n) { return String(n).padStart(2, '0'); };
   document.getElementById('move-date').min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
@@ -701,11 +711,56 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
     document.body.insertBefore(strip, document.body.firstChild);
   }
 
-  // This is a design preview: the form checks the answers but sends nothing.
+  // Send the price to the office. A github.io preview is marked as such, so test
+  // submissions while building the site are easy for the office to tell apart later.
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!form.reportValidity()) return;
-    note.textContent = 'Design preview: on the finished site this goes to info@atyourprice.co.uk.';
+    if (!supabase) {
+      note.classList.add('bad');
+      note.textContent = 'Sorry, we could not send your price just now. Please call us on 07442 248222.';
+      return;
+    }
+
+    var d = Object.fromEntries(new FormData(form).entries());
+    var isWindow = d.availability === 'window';
+    var row = {
+      name: d.name, phone: d.phone, email: d.email,
+      from_address: d.from_address, from_floor: d.from_floor || null,
+      from_lift: d.from_lift === 'yes', from_parking: d.from_parking === 'yes',
+      to_address: d.to_address, to_floor: d.to_floor || null,
+      to_lift: d.to_lift === 'yes', to_parking: d.to_parking === 'yes',
+      move_date: d.date,
+      availability: d.availability,
+      window_from: isWindow ? d.window_from : null,
+      window_to: isWindow ? d.window_to : null,
+      movers: d.movers || null,
+      items_count: d.items_count ? Number(d.items_count) : null,
+      items: d.items,
+      requests: d.requests || null,
+      dismantle: d.dismantle === 'yes', heavy: d.heavy === 'yes',
+      price: Number(d.price),
+      source: /\.github\.io$/.test(location.hostname) ? 'preview' : 'website'
+    };
+
+    submitBtn.disabled = true;
+    note.classList.remove('bad');
+    note.textContent = 'Sending your price…';
+
+    // One controlled entry point: it can only ever insert a new booking, never read,
+    // change or delete an existing one, so a public key here cannot expose anyone's details.
+    supabase.rpc('submit_booking', { payload: row }).then(function (res) {
+      submitBtn.disabled = false;
+      if (res.error) {
+        note.classList.add('bad');
+        note.textContent = 'Sorry, we could not send your price just now. Please call us on 07442 248222.';
+        return;
+      }
+      note.classList.remove('bad');
+      note.textContent = 'Thank you — your reference is ' + res.data + '. We will answer within the hour.';
+      form.reset();
+      sync();
+    });
   });
 })();
 </script>
