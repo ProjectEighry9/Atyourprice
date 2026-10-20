@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Office | At Your Price</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F2E9; --paper-2:#EDE8DB; --card:#FBF9F3; --white:#fff;
+  --ink:#1B1D1A; --muted:#565C56; --line:#DBD5C6; --field:#CEC7B6;
+  --green:#1E3B30; --green-2:#264A3C; --brass:#A9823A; --brass-2:#C9A45A;
+  --bad:#8C2F23; --bad-bg:#F6E7E3;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--body)}
+h1,h2,h3,p,ul{margin:0}
+ul{padding:0;list-style:none}
+button,input,select,textarea{font:inherit;color:inherit}
+.display{font-family:var(--display);font-weight:600;letter-spacing:-.01em}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+
+/* login */
+.login-screen{min-height:100vh;display:grid;place-items:center;padding:24px}
+.login-card{width:min(100%,380px);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:32px}
+.login-card h1{font-size:26px;margin-bottom:6px}
+.login-card p{color:var(--muted);font-size:14px;margin-bottom:22px}
+.field{display:block;margin-bottom:16px}
+.field span{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+.field input{display:block;width:100%;height:44px;padding:0 12px;border:1px solid var(--field);border-radius:6px;background:var(--white)}
+.field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(30,59,48,.14)}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;border-radius:6px;border:1px solid transparent;background:var(--green);color:var(--paper);font-weight:700;font-size:14.5px;cursor:pointer;width:100%}
+.btn:hover{background:var(--green-2)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn-line{background:transparent;border-color:var(--field);color:var(--ink)}
+.btn-line:hover{border-color:var(--ink)}
+.msg{font-size:13.5px;margin-top:14px;min-height:1px}
+.msg.bad{color:var(--bad)}
+.msg.ok{color:var(--green)}
+
+/* app shell */
+#app{display:none}
+header.bar{position:sticky;top:0;z-index:10;background:rgba(246,242,233,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;gap:18px;min-height:60px}
+.bar h1{font-size:18px;margin-right:auto}
+.bar .who{font-size:13px;color:var(--muted)}
+.bar .btn{width:auto;height:36px;padding:0 14px;font-size:13px}
+
+nav.tabs{display:flex;gap:4px;margin:20px 0;border-bottom:1px solid var(--line)}
+nav.tabs button{appearance:none;background:transparent;border:0;border-bottom:3px solid transparent;padding:10px 4px;margin-right:22px;font:600 14.5px/1 var(--body);color:var(--muted);cursor:pointer}
+nav.tabs button.active{color:var(--ink);border-bottom-color:var(--brass)}
+nav.tabs button .count{display:inline-block;margin-left:7px;padding:1px 7px;border-radius:999px;background:var(--line);font-size:12px;font-weight:700;color:var(--ink)}
+
+.panel{display:none;padding-bottom:60px}
+.panel.active{display:block}
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.toolbar .btn{width:auto;padding:0 16px}
+.toolbar .btn-line{height:36px;font-size:13px}
+
+/* bookings table */
+.table-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{text-align:left;padding:11px 14px;font-size:13.5px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--paper-2)}
+tbody tr:last-child td{border-bottom:0}
+td.wrap-cell{white-space:normal;max-width:220px}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.02em}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge-new{background:#EEF0E7;color:#555}
+.badge-reviewing{background:#FBF1DC;color:#8A6417}
+.badge-yes_sent{background:#E4EFE8;color:var(--green)}
+.badge-no_sent{background:var(--bad-bg);color:var(--bad)}
+.badge-confirmed{background:#E4EFE8;color:var(--green)}
+.badge-scheduled{background:#E9EEF5;color:#2E4D7A}
+.badge-in_progress{background:#FBF1DC;color:#8A6417}
+.badge-completed{background:#EAEAEA;color:#444}
+.badge-cancelled{background:var(--bad-bg);color:var(--bad)}
+
+/* detail drawer */
+.scrim{display:none;position:fixed;inset:0;background:rgba(27,29,26,.45);z-index:20}
+.scrim.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(100%,480px);background:var(--paper);box-shadow:-12px 0 32px rgba(0,0,0,.18);z-index:21;transform:translateX(100%);transition:transform .2s ease;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-in{padding:24px}
+.drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.drawer-head h2{font-size:22px}
+.drawer-head .job{color:var(--brass);font-weight:700;font-size:13px}
+.x-close{appearance:none;background:transparent;border:1px solid var(--field);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:16px;line-height:1}
+.drawer section{margin-bottom:22px}
+.drawer h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.drawer label{display:block;font-weight:600;font-size:12.5px;margin-bottom:5px;margin-top:12px}
+.drawer select,.drawer textarea,.drawer input[type=text]{display:block;width:100%;padding:0 10px;height:40px;border:1px solid var(--field);border-radius:6px;background:var(--white)}
+.drawer textarea{height:auto;padding:9px 10px;line-height:1.45}
+.check-row{display:flex;align-items:center;gap:8px;margin-top:14px}
+.check-row input{width:16px;height:16px}
+.drawer-save{display:flex;gap:10px;margin-top:20px}
+.drawer-save .btn{width:auto;flex:1}
+
+/* drivers / vans */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:22px}
+.mini-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
+.mini-card h4{font-size:15px;margin-bottom:4px}
+.mini-card p{font-size:12.5px;color:var(--muted)}
+.mini-card .pill{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.pill-active{background:#E4EFE8;color:var(--green)}
+.pill-inactive{background:var(--line);color:var(--muted)}
+form.add-form{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:20px}
+form.add-form .f{display:flex;flex-direction:column;gap:5px}
+form.add-form label{font-size:12px;font-weight:600;color:var(--muted)}
+form.add-form input{height:38px;padding:0 10px;border:1px solid var(--field);border-radius:6px;background:var(--white);min-width:130px}
+form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
+
+@media (max-width:640px){
+  .grid2{grid-template-columns:1fr}
+  .drawer{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <h1 class="display">Office sign-in</h1>
+    <p>At Your Price &middot; booking management</p>
+
+    <div id="step-email">
+      <label class="field"><span>Your email</span>
+        <input type="email" id="login-email" autocomplete="email" placeholder="you@atyourprice.co.uk">
+      </label>
+      <button class="btn" id="send-code-btn" type="button">Send me a code</button>
+    </div>
+
+    <div id="step-code" hidden>
+      <p style="margin-top:-8px;margin-bottom:16px">Enter the 6-digit code sent to <strong id="code-sent-to"></strong>.</p>
+      <label class="field"><span>Code</span>
+        <input type="text" id="login-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+      </label>
+      <button class="btn" id="verify-code-btn" type="button">Sign in</button>
+      <button class="btn btn-line" id="back-to-email-btn" type="button" style="margin-top:10px">Use a different email</button>
+    </div>
+
+    <p class="msg" id="login-msg" role="status"></p>
+  </div>
+</div>
+
+<div id="app">
+  <header class="bar">
+    <div class="wrap bar-in">
+      <h1 class="display">At Your Price &middot; Office</h1>
+      <span class="who" id="who"></span>
+      <button class="btn btn-line" id="sign-out-btn" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <nav class="tabs">
+      <button type="button" data-tab="new" class="active">New <span class="count" id="count-new">0</span></button>
+      <button type="button" data-tab="current">Current <span class="count" id="count-current">0</span></button>
+      <button type="button" data-tab="past">Past <span class="count" id="count-past">0</span></button>
+      <button type="button" data-tab="drivers">Drivers</button>
+      <button type="button" data-tab="vans">Vans</button>
+    </nav>
+
+    <section class="panel active" data-panel="new">
+      <div class="toolbar"><button class="btn btn-line" type="button" data-refresh="bookings">Refresh</button></div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>Job</th><th>Customer</th><th>Date</th><th>From &rarr; To</th><th>Price</th><th>Status</th>
+      </tr></thead><tbody id="rows-new"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-panel="current">
+      <div class="toolbar"><button class="btn btn-line" type="button" data-refresh="bookings">Refresh</button></div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>Job</th><th>Customer</th><th>Date</th><th>From &rarr; To</th><th>Driver</th><th>Price</th><th>Status</th>
+      </tr></thead><tbody id="rows-current"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-panel="past">
+      <div class="toolbar"><button class="btn btn-line" type="button" data-refresh="bookings">Refresh</button></div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>Job</th><th>Customer</th><th>Date</th><th>From &rarr; To</th><th>Price</th><th>Status</th>
+      </tr></thead><tbody id="rows-past"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-panel="drivers">
+      <form class="add-form" id="driver-form">
+        <div class="f"><label>Name</label><input name="name" required></div>
+        <div class="f"><label>Phone</label><input name="phone"></div>
+        <div class="f"><label>Driver ID (login)</label><input name="login_code" required placeholder="e.g. D-01"></div>
+        <button class="btn" type="submit">Add driver</button>
+      </form>
+      <div class="cards" id="driver-cards"></div>
+    </section>
+
+    <section class="panel" data-panel="vans">
+      <form class="add-form" id="van-form">
+        <div class="f"><label>Registration</label><input name="registration" required></div>
+        <div class="f"><label>Size</label><input name="size" placeholder="e.g. LWB high-roof"></div>
+        <button class="btn" type="submit">Add van</button>
+      </form>
+      <div class="cards" id="van-cards"></div>
+    </section>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-in" id="drawer-body"></div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(function () {
+  var supabase = window.supabase.createClient(
+    'https://ewovlfzoogiqbpllkrsf.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3b3ZsZnpvb2dpcWJwbGxrcnNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MzEwNjgsImV4cCI6MjEwODAwNzA2OH0.TCbMBehb7lop0dgPW_Ncesz1uTotIFlzwbb21nmgRx0'
+  );
+
+  var STATUS_LABEL = {
+    new: 'New', reviewing: 'Reviewing', yes_sent: 'Yes sent', no_sent: 'No sent',
+    confirmed: 'Confirmed', scheduled: 'Scheduled', in_progress: 'In progress',
+    completed: 'Completed', cancelled: 'Cancelled'
+  };
+  var NEW_STATUSES = ['new', 'reviewing', 'yes_sent', 'no_sent'];
+  var CURRENT_STATUSES = ['confirmed', 'scheduled', 'in_progress'];
+  var PAST_STATUSES = ['completed', 'cancelled'];
+  var ALL_STATUSES = NEW_STATUSES.concat(CURRENT_STATUSES, PAST_STATUSES);
+
+  var loginScreen = document.getElementById('login-screen');
+  var app = document.getElementById('app');
+  var loginMsg = document.getElementById('login-msg');
+  var stepEmail = document.getElementById('step-email');
+  var stepCode = document.getElementById('step-code');
+  var emailInput = document.getElementById('login-email');
+  var codeInput = document.getElementById('login-code');
+  var sentTo = document.getElementById('code-sent-to');
+
+  function setMsg(text, kind) {
+    loginMsg.textContent = text || '';
+    loginMsg.className = 'msg' + (kind ? ' ' + kind : '');
+  }
+
+  document.getElementById('send-code-btn').addEventListener('click', function () {
+    var email = emailInput.value.trim();
+    if (!email) { setMsg('Enter your email first.', 'bad'); return; }
+    this.disabled = true;
+    setMsg('Sending your code…');
+    supabase.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true } }).then(function (res) {
+      document.getElementById('send-code-btn').disabled = false;
+      if (res.error) { setMsg(res.error.message, 'bad'); return; }
+      sentTo.textContent = email;
+      stepEmail.hidden = true;
+      stepCode.hidden = false;
+      setMsg('Code sent. Check your email.', 'ok');
+      codeInput.focus();
+    });
+  });
+
+  document.getElementById('back-to-email-btn').addEventListener('click', function () {
+    stepEmail.hidden = false;
+    stepCode.hidden = true;
+    setMsg('');
+  });
+
+  document.getElementById('verify-code-btn').addEventListener('click', function () {
+    var email = emailInput.value.trim();
+    var token = codeInput.value.trim();
+    if (!token) { setMsg('Enter the code from your email.', 'bad'); return; }
+    this.disabled = true;
+    setMsg('Checking your code…');
+    supabase.auth.verifyOtp({ email: email, token: token, type: 'email' }).then(function (res) {
+      document.getElementById('verify-code-btn').disabled = false;
+      if (res.error) { setMsg(res.error.message, 'bad'); return; }
+      enterApp();
+    });
+  });
+
+  document.getElementById('sign-out-btn').addEventListener('click', function () {
+    supabase.auth.signOut().then(function () { location.reload(); });
+  });
+
+  // ---- app shell ----
+  var bookings = [], drivers = [], vans = [];
+  var activeTab = 'new';
+
+  function enterApp() {
+    supabase.auth.getUser().then(function (res) {
+      var user = res.data && res.data.user;
+      document.getElementById('who').textContent = user ? user.email : '';
+    });
+    loginScreen.style.display = 'none';
+    app.style.display = 'block';
+    loadAll();
+  }
+
+  [].slice.call(document.querySelectorAll('.tabs button')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      activeTab = btn.dataset.tab;
+      [].slice.call(document.querySelectorAll('.tabs button')).forEach(function (b) { b.classList.toggle('active', b === btn); });
+      [].slice.call(document.querySelectorAll('.panel')).forEach(function (p) { p.classList.toggle('active', p.dataset.panel === activeTab); });
+    });
+  });
+
+  [].slice.call(document.querySelectorAll('[data-refresh="bookings"]')).forEach(function (b) {
+    b.addEventListener('click', loadBookings);
+  });
+
+  function loadAll() { loadBookings(); loadDrivers(); loadVans(); }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function fmtDate(d) {
+    if (!d) return '';
+    var parts = d.split('-');
+    return parts[2] + '/' + parts[1] + '/' + parts[0];
+  }
+  function fmtMoney(n) { return '£' + Number(n).toFixed(0); }
+  function driverName(id) { var d = drivers.filter(function (x) { return x.id === id; })[0]; return d ? d.name : '—'; }
+
+  function loadBookings() {
+    supabase.from('bookings').select('*').order('created_at', { ascending: false }).then(function (res) {
+      if (res.error) { console.error(res.error); return; }
+      bookings = res.data || [];
+      renderBookings();
+    });
+  }
+  function loadDrivers() {
+    supabase.from('drivers').select('*').order('created_at').then(function (res) {
+      if (res.error) { console.error(res.error); return; }
+      drivers = res.data || [];
+      renderDrivers();
+      renderBookings(); // driver names may now be resolvable in the Current table
+    });
+  }
+  function loadVans() {
+    supabase.from('vans').select('*').order('created_at').then(function (res) {
+      if (res.error) { console.error(res.error); return; }
+      vans = res.data || [];
+      renderVans();
+    });
+  }
+
+  function renderBookings() {
+    var groups = { new: [], current: [], past: [] };
+    bookings.forEach(function (b) {
+      if (NEW_STATUSES.indexOf(b.status) > -1) groups.new.push(b);
+      else if (CURRENT_STATUSES.indexOf(b.status) > -1) groups.current.push(b);
+      else groups.past.push(b);
+    });
+    document.getElementById('count-new').textContent = groups.new.length;
+    document.getElementById('count-current').textContent = groups.current.length;
+    document.getElementById('count-past').textContent = groups.past.length;
+
+    renderRows('rows-new', groups.new, false);
+    renderRows('rows-current', groups.current, true);
+    renderRows('rows-past', groups.past, false);
+  }
+
+  function renderRows(tbodyId, list, showDriver) {
+    var tbody = document.getElementById(tbodyId);
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td class="empty" colspan="7">Nothing here.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(function (b) {
+      return '<tr data-id="' + b.id + '">' +
+        '<td>' + esc(b.job_number) + '</td>' +
+        '<td>' + esc(b.name) + '</td>' +
+        '<td>' + fmtDate(b.move_date) + '</td>' +
+        '<td class="wrap-cell">' + esc(b.from_address) + ' &rarr; ' + esc(b.to_address) + '</td>' +
+        (showDriver ? '<td>' + esc(driverName(b.assigned_driver_id)) + '</td>' : '') +
+        '<td>' + fmtMoney(b.price) + '</td>' +
+        '<td><span class="badge badge-' + b.status + '">' + esc(STATUS_LABEL[b.status] || b.status) + '</span></td>' +
+        '</tr>';
+    }).join('');
+    [].slice.call(tbody.querySelectorAll('tr[data-id]')).forEach(function (tr) {
+      tr.addEventListener('click', function () { openDrawer(tr.dataset.id); });
+    });
+  }
+
+  // ---- booking detail drawer ----
+  var scrim = document.getElementById('scrim');
+  var drawer = document.getElementById('drawer');
+  var drawerBody = document.getElementById('drawer-body');
+
+  function closeDrawer() { scrim.classList.remove('open'); drawer.classList.remove('open'); }
+  scrim.addEventListener('click', closeDrawer);
+
+  function openDrawer(id) {
+    var b = bookings.filter(function (x) { return x.id === id; })[0];
+    if (!b) return;
+    var driverOptions = '<option value="">Unassigned</option>' + drivers.map(function (d) {
+      return '<option value="' + d.id + '"' + (d.id === b.assigned_driver_id ? ' selected' : '') + '>' + esc(d.name) + ' (' + esc(d.login_code) + ')</option>';
+    }).join('');
+    var vanOptions = '<option value="">Unassigned</option>' + vans.map(function (v) {
+      return '<option value="' + v.id + '"' + (v.id === b.assigned_van_id ? ' selected' : '') + '>' + esc(v.registration) + '</option>';
+    }).join('');
+    var statusOptions = ALL_STATUSES.map(function (s) {
+      return '<option value="' + s + '"' + (s === b.status ? ' selected' : '') + '>' + STATUS_LABEL[s] + '</option>';
+    }).join('');
+
+    drawerBody.innerHTML =
+      '<div class="drawer-head"><div><div class="job">' + esc(b.job_number) + '</div><h2 class="display">' + esc(b.name) + '</h2></div>' +
+      '<button class="x-close" type="button" id="drawer-close">&times;</button></div>' +
+
+      '<section><h3>Customer</h3><dl class="kv">' +
+      '<dt>Phone</dt><dd><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + '</a></dd>' +
+      '<dt>Email</dt><dd><a href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a></dd>' +
+      '</dl></section>' +
+
+      '<section><h3>Collection</h3><dl class="kv">' +
+      '<dt>Address</dt><dd>' + esc(b.from_address) + '</dd>' +
+      '<dt>Floor</dt><dd>' + esc(b.from_floor || '—') + (b.from_lift ? ', lift' : ', no lift') + (b.from_parking ? ', parking 20m+' : '') + '</dd>' +
+      '</dl></section>' +
+
+      '<section><h3>Delivery</h3><dl class="kv">' +
+      '<dt>Address</dt><dd>' + esc(b.to_address) + '</dd>' +
+      '<dt>Floor</dt><dd>' + esc(b.to_floor || '—') + (b.to_lift ? ', lift' : ', no lift') + (b.to_parking ? ', parking 20m+' : '') + '</dd>' +
+      '</dl></section>' +
+
+      '<section><h3>When &amp; what</h3><dl class="kv">' +
+      '<dt>Date</dt><dd>' + fmtDate(b.move_date) + '</dd>' +
+      '<dt>Available</dt><dd>' + (b.availability === 'window' ? (b.window_from + '–' + b.window_to) : 'All day') + '</dd>' +
+      '<dt>Movers</dt><dd>' + esc(b.movers || '—') + '</dd>' +
+      '<dt>Items</dt><dd>' + esc(b.items) + (b.items_count ? ' (' + b.items_count + ')' : '') + '</dd>' +
+      '<dt>Dismantle</dt><dd>' + (b.dismantle ? 'Yes' : 'No') + '</dd>' +
+      '<dt>Heavy (50kg+)</dt><dd>' + (b.heavy ? 'Yes' : 'No') + '</dd>' +
+      (b.requests ? '<dt>Requests</dt><dd>' + esc(b.requests) + '</dd>' : '') +
+      '<dt>Price named</dt><dd><strong>' + fmtMoney(b.price) + '</strong></dd>' +
+      '<dt>Source</dt><dd>' + esc(b.source) + '</dd>' +
+      '</dl></section>' +
+
+      '<section><h3>Office</h3>' +
+      '<label for="f-status">Status</label><select id="f-status">' + statusOptions + '</select>' +
+      '<div class="grid2">' +
+      '<div><label for="f-driver">Driver</label><select id="f-driver">' + driverOptions + '</select></div>' +
+      '<div><label for="f-van">Van</label><select id="f-van">' + vanOptions + '</select></div>' +
+      '</div>' +
+      '<label class="check-row"><input type="checkbox" id="f-deposit"' + (b.deposit_paid ? ' checked' : '') + '> <span>Deposit paid</span></label>' +
+      '<label for="f-notes">Internal notes</label><textarea id="f-notes" rows="3">' + esc(b.internal_notes || '') + '</textarea>' +
+      '<p class="msg" id="drawer-msg"></p>' +
+      '<div class="drawer-save"><button class="btn" type="button" id="save-booking-btn">Save</button>' +
+      '<button class="btn btn-line" type="button" id="close-booking-btn">Close</button></div>' +
+      '</section>';
+
+    document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+    document.getElementById('close-booking-btn').addEventListener('click', closeDrawer);
+    document.getElementById('save-booking-btn').addEventListener('click', function () { saveBooking(b.id); });
+
+    scrim.classList.add('open');
+    drawer.classList.add('open');
+  }
+
+  function saveBooking(id) {
+    var btn = document.getElementById('save-booking-btn');
+    var msg = document.getElementById('drawer-msg');
+    var patch = {
+      status: document.getElementById('f-status').value,
+      assigned_driver_id: document.getElementById('f-driver').value || null,
+      assigned_van_id: document.getElementById('f-van').value || null,
+      deposit_paid: document.getElementById('f-deposit').checked,
+      internal_notes: document.getElementById('f-notes').value || null
+    };
+    btn.disabled = true;
+    msg.textContent = 'Saving…';
+    msg.className = 'msg';
+    supabase.from('bookings').update(patch).eq('id', id).then(function (res) {
+      btn.disabled = false;
+      if (res.error) { msg.textContent = res.error.message; msg.className = 'msg bad'; return; }
+      msg.textContent = 'Saved.';
+      msg.className = 'msg ok';
+      loadBookings();
+    });
+  }
+
+  // ---- drivers ----
+  function renderDrivers() {
+    var box = document.getElementById('driver-cards');
+    if (!drivers.length) { box.innerHTML = '<p class="empty">No drivers yet.</p>'; return; }
+    box.innerHTML = drivers.map(function (d) {
+      return '<div class="mini-card">' +
+        '<h4>' + esc(d.name) + '</h4>' +
+        '<p>ID: ' + esc(d.login_code) + (d.phone ? ' &middot; ' + esc(d.phone) : '') + '</p>' +
+        '<span class="pill ' + (d.active ? 'pill-active' : 'pill-inactive') + '" data-toggle-driver="' + d.id + '" style="cursor:pointer">' +
+        (d.active ? 'Active' : 'Inactive') + '</span></div>';
+    }).join('');
+    [].slice.call(box.querySelectorAll('[data-toggle-driver]')).forEach(function (el) {
+      el.addEventListener('click', function () {
+        var d = drivers.filter(function (x) { return x.id === el.dataset.toggleDriver; })[0];
+        supabase.from('drivers').update({ active: !d.active }).eq('id', d.id).then(loadDrivers);
+      });
+    });
+  }
+
+  document.getElementById('driver-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target;
+    var row = { name: f.name.value, phone: f.phone.value || null, login_code: f.login_code.value };
+    supabase.from('drivers').insert(row).then(function (res) {
+      if (res.error) { alert(res.error.message); return; }
+      f.reset();
+      loadDrivers();
+    });
+  });
+
+  // ---- vans ----
+  function renderVans() {
+    var box = document.getElementById('van-cards');
+    if (!vans.length) { box.innerHTML = '<p class="empty">No vans yet.</p>'; return; }
+    box.innerHTML = vans.map(function (v) {
+      return '<div class="mini-card">' +
+        '<h4>' + esc(v.registration) + '</h4>' +
+        '<p>' + esc(v.size || '') + '</p>' +
+        '<span class="pill ' + (v.active ? 'pill-active' : 'pill-inactive') + '" data-toggle-van="' + v.id + '" style="cursor:pointer">' +
+        (v.active ? 'Active' : 'Inactive') + '</span></div>';
+    }).join('');
+    [].slice.call(box.querySelectorAll('[data-toggle-van]')).forEach(function (el) {
+      el.addEventListener('click', function () {
+        var v = vans.filter(function (x) { return x.id === el.dataset.toggleVan; })[0];
+        supabase.from('vans').update({ active: !v.active }).eq('id', v.id).then(loadVans);
+      });
+    });
+  }
+
+  document.getElementById('van-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target;
+    var row = { registration: f.registration.value, size: f.size.value || null };
+    supabase.from('vans').insert(row).then(function (res) {
+      if (res.error) { alert(res.error.message); return; }
+      f.reset();
+      loadVans();
+    });
+  });
+
+  // ---- resume a session already signed in (e.g. page refresh) ----
+  supabase.auth.getSession().then(function (res) {
+    if (res.data && res.data.session) enterApp();
+  });
+})();
+</script>
+</body>
+</html>
