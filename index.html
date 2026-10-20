@@ -221,6 +221,8 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 @media (max-width:900px){
   .hero{padding:48px 0 64px}
   .hero-in,.order-in,.about-in{grid-template-columns:minmax(0,1fr);gap:44px}
+  /* once About us stacks to one column, read the story first and the van photo after it */
+  .about-in .photo{order:2}
   /* on a phone the two plates stack into a wall of pictures, so the clock stands down
      and the bridge, with the van crossing it, stays. The line underneath is about the
      clock, so it stands down with it rather than floating with nothing above it. */
