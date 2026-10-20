@@ -140,13 +140,13 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
       <label class="field"><span>Your email</span>
         <input type="email" id="login-email" autocomplete="email" placeholder="you@atyourprice.co.uk">
       </label>
-      <button class="btn" id="send-code-btn" type="button">Email me a sign-in link</button>
+      <button class="btn" id="send-code-btn" type="button">Email me a code</button>
     </div>
 
     <div id="step-code" hidden>
-      <p style="margin-top:-8px;margin-bottom:16px">We've sent a sign-in link to <strong id="code-sent-to"></strong>. Open it on this device to continue. If your email shows a code instead of a link, enter it below.</p>
-      <label class="field"><span>Code <small style="font-weight:400;color:var(--muted)">(only if your email shows one)</small></span>
-        <input type="text" id="login-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+      <p style="margin-top:-8px;margin-bottom:16px">We've sent a code to <strong id="code-sent-to"></strong>. Enter it below, or open the sign-in link in that same email.</p>
+      <label class="field"><span>Code</span>
+        <input type="text" id="login-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="12345678">
       </label>
       <button class="btn" id="verify-code-btn" type="button">Sign in with code</button>
       <button class="btn btn-line" id="back-to-email-btn" type="button" style="margin-top:10px">Use a different email</button>
