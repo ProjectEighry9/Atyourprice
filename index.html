@@ -166,6 +166,8 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 
 /* about */
 .about-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px 64px;align-items:start}
+.about-in .photo{margin:0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:4px}
+.about-in .photo img{width:100%;height:auto;aspect-ratio:4 / 3;object-fit:cover;object-position:50% 65%;border-radius:2px}
 .about-in p + p{margin-top:16px}
 .about-in .sub{margin-top:0}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:64px;padding-top:32px;border-top:1px solid var(--line)}
@@ -496,13 +498,16 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
   <section class="section" id="about">
     <div class="wrap">
       <div class="about-in">
+        <figure class="photo">
+          <img src="https://atyourprice.co.uk/upload/medialibrary/65e/8mqqo9419j8frevctfwv1vgjyrk4mqlu/AT_YOUR_PRICE_main%20slider.jpg" alt="The At Your Price van on the road above Tower Bridge" loading="lazy" width="1024" height="576">
+        </figure>
         <div>
           <span class="eyebrow">About us</span>
           <h2 class="display">We work within <em>your budget.</em></h2>
-        </div>
-        <div>
-          <p class="sub">At Your Price started with one van in February 2023. Since then our founder has completed more than 5,000 jobs in London and beyond, and built the company around one simple idea: you set the price, and we tell you honestly whether we can do it.</p>
-          <p class="sub">No hidden commissions, no imposed rates and no surprises on the day. Just punctual, careful work at a price that is fair for everyone.</p>
+          <p class="sub">I purchased my first van in February 2023, and from that moment, I have been continuously working in man and van and removals services. During this period, I have personally completed more than 5,000 jobs on various platforms in London and beyond.</p>
+          <p class="sub">Based on our experience, we can confidently say that the man and van service we are launching is created to make the removals market transparent, honest and fair &mdash; for clients, drivers, movers and the managing company alike.</p>
+          <p class="sub">This means that by working with us, you set your own price for the service, and we review it. If we accept it, everything will be without hidden commissions, without imposed rates and without unpleasant surprises. At the same time, you receive a high level of service, responsibility, punctuality and a professional approach to every job.</p>
+          <p class="sub">We strive to create a system in which all parties win &mdash; a fair price, fair work and a fair result. Our main goal is to expand this service across the UK, saving you as much time and money as possible. You help us, and we help you.</p>
         </div>
       </div>
       <ul class="stats">
