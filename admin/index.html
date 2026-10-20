@@ -258,7 +258,10 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
     if (!email) { setMsg('Enter your email first.', 'bad'); return; }
     this.disabled = true;
     setMsg('Sending your code…');
-    supabase.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true } }).then(function (res) {
+    // Say exactly where the link should return to. Left to its own default, Supabase can
+    // fall back to just the origin of the project's Site URL and drop the /admin/ path.
+    var hereNoHash = location.href.split('#')[0];
+    supabase.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true, emailRedirectTo: hereNoHash } }).then(function (res) {
       document.getElementById('send-code-btn').disabled = false;
       if (res.error) { setMsg(res.error.message, 'bad'); return; }
       sentTo.textContent = email;
