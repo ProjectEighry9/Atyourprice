@@ -43,7 +43,7 @@ ul,ol{padding:0;list-style:none}
   repeating-linear-gradient(90deg,var(--field) 0 1px,transparent 1px 12px) left bottom/100% 7px no-repeat}
 
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:4px;border:1px solid transparent;font:600 15.5px/1 var(--body);letter-spacing:.01em;cursor:pointer;white-space:nowrap;transition:background-color .15s ease,color .15s ease,border-color .15s ease}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 26px;border-radius:4px;border:1px solid transparent;font:600 15.5px/1 var(--body);letter-spacing:.01em;cursor:pointer;white-space:nowrap;transition:background-color .15s ease,color .15s ease,border-color .15s ease}
 .btn-sm{min-height:42px;padding:0 18px;font-size:14.5px}
 .btn-green{background:var(--green);color:var(--paper)}
 .btn-green:hover{background:var(--green-2)}
@@ -53,6 +53,9 @@ ul,ol{padding:0;list-style:none}
 .btn-brass:hover{background:#d6b46d}
 .btn-line-light{border-color:rgba(245,243,238,.6);color:var(--paper)}
 .btn-line-light:hover{background:var(--paper);color:var(--green)}
+.btn svg{width:17px;height:17px;flex:none}
+.btn-whatsapp-bar{appearance:none;background:var(--card);border:1px solid var(--field);border-radius:999px;width:48px;height:48px;display:inline-grid;place-items:center;color:var(--green);flex:none}
+.btn-whatsapp-bar svg{width:22px;height:22px}
 
 /* header */
 .top{position:sticky;top:0;z-index:20;background:rgba(245,243,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
@@ -241,7 +244,7 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
   .lede{font-size:17.5px}
   .facts{flex-direction:column}
   .facts li{padding:0;border-left:0}
-  .mbar{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(245,243,238,.97);border-top:1px solid var(--line)}
+  .mbar{display:grid;grid-template-columns:auto 1fr 1.4fr;align-items:stretch;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(245,243,238,.97);border-top:1px solid var(--line)}
   body{padding-bottom:72px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -251,6 +254,15 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- a plain speech-bubble-and-handset mark, not the trademarked WhatsApp glyph; the word
+       "WhatsApp" always sits beside it, so the icon only has to read as "chat", not identify the brand -->
+  <symbol id="i-whatsapp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 20.5 5.300 16.5A8 8 0 1 1 8.600 19.3Z"/>
+    <path d="M9 10.300c0 2.600 2.100 4.700 4.700 4.700.400 0 .700-.3.700-.700v-.930a.6.6 0 0 0-.46-.580l-1.370-.350a.6.6 0 0 0-.6.170l-.2.2a5.300 5.300 0 0 1-2.170-2.170l.2-.2a.6.6 0 0 0 .17-.6l-.35-1.370a.6.6 0 0 0-.58-.46H8.700a.7.7 0 0 0-.7.7Z"/>
+  </symbol>
+</svg>
 
 <header class="top">
   <div class="wrap top-in">
@@ -275,12 +287,13 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
   <section class="hero">
     <div class="wrap hero-in">
       <div>
-        <span class="eyebrow">Man &amp; van · Removals · London</span>
+        <span class="eyebrow">Man &amp; van · Removals · Across the UK</span>
         <h1 class="display">Move at <em>your price.</em></h1>
         <p class="lede">Tell us what needs moving and the price you think is fair. Within 60 minutes you get a yes, or a no with the reason why and one more try.</p>
         <div class="cta-row">
           <a class="btn btn-green" href="#order">Name your price</a>
           <a class="btn btn-line" href="tel:+447442248222">Call 07442 248222</a>
+          <a class="btn btn-line" href="https://wa.me/447442248222?text=Hi!%20I'd%20like%20to%20get%20a%20price%20for%20my%20move." target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-whatsapp"/></svg>WhatsApp</a>
         </div>
         <ul class="facts">
           <li>Single item to a full 15 m³ van</li>
@@ -545,12 +558,14 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
         <h2 class="display">Moving soon? <em>Name your price.</em></h2>
         <ul class="cta-contact">
           <li><span>Phone</span><a href="tel:+447442248222">07442 248222</a></li>
+          <li><span>WhatsApp</span><a href="https://wa.me/447442248222?text=Hi!%20I'd%20like%20to%20get%20a%20price%20for%20my%20move." target="_blank" rel="noopener">Message us</a></li>
           <li><span>Email</span><a href="mailto:info@atyourprice.co.uk">info@atyourprice.co.uk</a></li>
         </ul>
       </div>
       <div class="cta-row">
         <a class="btn btn-brass" href="#order">Name your price</a>
         <a class="btn btn-line-light" href="tel:+447442248222">Call us</a>
+        <a class="btn btn-line-light" href="https://wa.me/447442248222?text=Hi!%20I'd%20like%20to%20get%20a%20price%20for%20my%20move." target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-whatsapp"/></svg>WhatsApp</a>
       </div>
     </div>
   </section>
@@ -571,6 +586,7 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
         <h3>Contact</h3>
         <ul>
           <li><a href="tel:+447442248222">07442 248222</a></li>
+          <li><a href="https://wa.me/447442248222?text=Hi!%20I'd%20like%20to%20get%20a%20price%20for%20my%20move." target="_blank" rel="noopener">WhatsApp us</a></li>
           <li><a href="mailto:info@atyourprice.co.uk">info@atyourprice.co.uk</a></li>
         </ul>
       </div>
@@ -598,6 +614,7 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 </footer>
 
 <div class="mbar">
+  <a class="btn-whatsapp-bar" href="https://wa.me/447442248222?text=Hi!%20I'd%20like%20to%20get%20a%20price%20for%20my%20move." target="_blank" rel="noopener" aria-label="Message us on WhatsApp"><svg aria-hidden="true"><use href="#i-whatsapp"/></svg></a>
   <a class="btn btn-line" href="tel:+447442248222">Call</a>
   <a class="btn btn-green" href="#order">Name your price</a>
 </div>

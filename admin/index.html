@@ -549,9 +549,26 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
     });
   });
 
-  // ---- resume a session already signed in (e.g. page refresh) ----
-  supabase.auth.getSession().then(function (res) {
-    if (res.data && res.data.session) enterApp();
+  // A link in the sign-in email can arrive stale or already used — Supabase marks that
+  // with #error=... in the URL rather than a normal page. Show it plainly instead of a
+  // blank form, then drop it from the address bar so refreshing doesn't repeat it.
+  (function () {
+    var hash = location.hash.replace(/^#/, '');
+    if (hash.indexOf('error=') === -1) return;
+    var params = new URLSearchParams(hash);
+    setMsg(
+      params.get('error_code') === 'otp_expired'
+        ? 'That link has expired or was already used. Send yourself a new code below.'
+        : (params.get('error_description') || 'That sign-in link did not work.').replace(/\+/g, ' '),
+      'bad'
+    );
+    history.replaceState(null, '', location.pathname + location.search);
+  })();
+
+  // Covers every way a session can start: already signed in on a refresh, a fresh code
+  // just verified, or a magic-link click landing back here with the session in the URL.
+  supabase.auth.onAuthStateChange(function (event, session) {
+    if (session) enterApp();
   });
 })();
 </script>
