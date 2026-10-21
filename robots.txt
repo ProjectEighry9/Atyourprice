@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://atyourprice.co.uk/sitemap.xml
