@@ -85,6 +85,14 @@ td.wrap-cell{white-space:normal;max-width:220px}
 .badge-completed{background:#EAEAEA;color:#444}
 .badge-cancelled{background:var(--bad-bg);color:var(--bad)}
 
+/* stats */
+.stat-section{margin-bottom:32px}
+.stat-section h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px}
+.stat-card .num{font-size:26px}
+.stat-card .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+
 /* detail drawer */
 .scrim{display:none;position:fixed;inset:0;background:rgba(27,29,26,.45);z-index:20}
 .scrim.open{display:block}
@@ -170,6 +178,7 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
       <button type="button" data-tab="new" class="active">New <span class="count" id="count-new">0</span></button>
       <button type="button" data-tab="current">Current <span class="count" id="count-current">0</span></button>
       <button type="button" data-tab="past">Past <span class="count" id="count-past">0</span></button>
+      <button type="button" data-tab="stats">Stats</button>
       <button type="button" data-tab="drivers">Drivers</button>
       <button type="button" data-tab="vans">Vans</button>
     </nav>
@@ -193,6 +202,48 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
       <div class="table-wrap"><table><thead><tr>
         <th>Job</th><th>Customer</th><th>Date</th><th>From &rarr; To</th><th>Price</th><th>Status</th>
       </tr></thead><tbody id="rows-past"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-panel="stats">
+      <div class="toolbar"><button class="btn btn-line" type="button" data-refresh="all">Refresh</button></div>
+
+      <div class="stat-section">
+        <h3>Revenue</h3>
+        <div class="stat-cards">
+          <div class="stat-card"><div class="num display" id="stat-total-value">£0</div><div class="lbl">Total requested, all time</div></div>
+          <div class="stat-card"><div class="num display" id="stat-confirmed-value">£0</div><div class="lbl">Confirmed &amp; in progress</div></div>
+          <div class="stat-card"><div class="num display" id="stat-completed-value">£0</div><div class="lbl">Completed jobs</div></div>
+          <div class="stat-card"><div class="num display" id="stat-avg-price">£0</div><div class="lbl">Average price per job</div></div>
+          <div class="stat-card"><div class="num display" id="stat-month-count">0</div><div class="lbl">Requests this month</div></div>
+          <div class="stat-card"><div class="num display" id="stat-deposit-outstanding">£0</div><div class="lbl">Deposits outstanding</div></div>
+        </div>
+      </div>
+
+      <div class="stat-section">
+        <h3>Booking funnel</h3>
+        <div class="stat-cards">
+          <div class="stat-card"><div class="num display" id="stat-total-requests">0</div><div class="lbl">Total requests</div></div>
+          <div class="stat-card"><div class="num display" id="stat-pending">0</div><div class="lbl">Awaiting a yes/no</div></div>
+          <div class="stat-card"><div class="num display" id="stat-yes-rate">0%</div><div class="lbl">Said yes</div></div>
+          <div class="stat-card"><div class="num display" id="stat-confirmed-rate">0%</div><div class="lbl">Became a confirmed job</div></div>
+          <div class="stat-card"><div class="num display" id="stat-completed-count">0</div><div class="lbl">Completed</div></div>
+          <div class="stat-card"><div class="num display" id="stat-cancelled">0</div><div class="lbl">Cancelled</div></div>
+        </div>
+      </div>
+
+      <div class="stat-section">
+        <h3>Drivers</h3>
+        <div class="table-wrap"><table><thead><tr>
+          <th>Driver</th><th>Active jobs</th><th>Completed</th><th>Revenue (completed)</th>
+        </tr></thead><tbody id="stat-driver-rows"></tbody></table></div>
+      </div>
+
+      <div class="stat-section">
+        <h3>Vans</h3>
+        <div class="table-wrap"><table><thead><tr>
+          <th>Van</th><th>Active jobs</th><th>Completed</th><th>Revenue (completed)</th>
+        </tr></thead><tbody id="stat-van-rows"></tbody></table></div>
+      </div>
     </section>
 
     <section class="panel" data-panel="drivers">
@@ -332,6 +383,9 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
   [].slice.call(document.querySelectorAll('[data-refresh="bookings"]')).forEach(function (b) {
     b.addEventListener('click', loadBookings);
   });
+  [].slice.call(document.querySelectorAll('[data-refresh="all"]')).forEach(function (b) {
+    b.addEventListener('click', loadAll);
+  });
 
   function loadAll() { loadBookings(); loadDrivers(); loadVans(); }
 
@@ -353,6 +407,7 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
       if (res.error) { console.error(res.error); return; }
       bookings = res.data || [];
       renderBookings();
+      renderStats();
     });
   }
   function loadDrivers() {
@@ -361,6 +416,7 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
       drivers = res.data || [];
       renderDrivers();
       renderBookings(); // driver names may now be resolvable in the Current table
+      renderStats();
     });
   }
   function loadVans() {
@@ -368,7 +424,69 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
       if (res.error) { console.error(res.error); return; }
       vans = res.data || [];
       renderVans();
+      renderStats();
     });
+  }
+
+  // Every number here is derived from bookings/drivers/vans already in memory —
+  // no extra queries, just arithmetic, so it stays in sync with whatever loaded last.
+  var PENDING_STATUSES = ['new', 'reviewing'];
+  var ACCEPTED_STATUSES = ['confirmed', 'scheduled', 'in_progress', 'completed'];
+
+  function fmtMoneyFull(n) { return '£' + Math.round(Number(n) || 0).toLocaleString('en-GB'); }
+
+  function renderStats() {
+    var set = function (id, text) { var el = document.getElementById(id); if (el) el.textContent = text; };
+
+    var total = bookings.length;
+    var sumWhere = function (pred) { return bookings.filter(pred).reduce(function (s, b) { return s + Number(b.price || 0); }, 0); };
+    var countWhere = function (pred) { return bookings.filter(pred).length; };
+
+    var totalValue = sumWhere(function () { return true; });
+    var confirmedValue = sumWhere(function (b) { return ACCEPTED_STATUSES.indexOf(b.status) > -1; });
+    var completedValue = sumWhere(function (b) { return b.status === 'completed'; });
+    var avgPrice = total ? totalValue / total : 0;
+
+    var monthKey = new Date().toISOString().slice(0, 7);
+    var thisMonthCount = countWhere(function (b) { return (b.created_at || '').slice(0, 7) === monthKey; });
+    var depositOutstanding = sumWhere(function (b) { return ACCEPTED_STATUSES.indexOf(b.status) > -1 && !b.deposit_paid; });
+
+    set('stat-total-value', fmtMoneyFull(totalValue));
+    set('stat-confirmed-value', fmtMoneyFull(confirmedValue));
+    set('stat-completed-value', fmtMoneyFull(completedValue));
+    set('stat-avg-price', fmtMoneyFull(avgPrice));
+    set('stat-month-count', thisMonthCount);
+    set('stat-deposit-outstanding', fmtMoneyFull(depositOutstanding));
+
+    var pendingCount = countWhere(function (b) { return PENDING_STATUSES.indexOf(b.status) > -1; });
+    var yesCount = countWhere(function (b) { return ['new', 'reviewing', 'no_sent'].indexOf(b.status) === -1; });
+    var decidedCount = total - pendingCount;
+    var yesRate = decidedCount ? Math.round((yesCount / decidedCount) * 100) : 0;
+    var confirmedRate = total ? Math.round((countWhere(function (b) { return ACCEPTED_STATUSES.indexOf(b.status) > -1; }) / total) * 100) : 0;
+
+    set('stat-total-requests', total);
+    set('stat-pending', pendingCount);
+    set('stat-yes-rate', yesRate + '%');
+    set('stat-confirmed-rate', confirmedRate + '%');
+    set('stat-completed-count', countWhere(function (b) { return b.status === 'completed'; }));
+    set('stat-cancelled', countWhere(function (b) { return b.status === 'cancelled'; }));
+
+    renderActivityTable('stat-driver-rows', drivers, 'assigned_driver_id', 'No drivers added yet.');
+    renderActivityTable('stat-van-rows', vans, 'assigned_van_id', 'No vans added yet.');
+  }
+
+  function renderActivityTable(tbodyId, fleet, key, emptyText) {
+    var tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    if (!fleet.length) { tbody.innerHTML = '<tr><td class="empty" colspan="4">' + emptyText + '</td></tr>'; return; }
+    tbody.innerHTML = fleet.map(function (f) {
+      var mine = bookings.filter(function (b) { return b[key] === f.id; });
+      var active = mine.filter(function (b) { return ['confirmed', 'scheduled', 'in_progress'].indexOf(b.status) > -1; }).length;
+      var completed = mine.filter(function (b) { return b.status === 'completed'; });
+      var revenue = completed.reduce(function (s, b) { return s + Number(b.price || 0); }, 0);
+      var name = esc(f.name || f.registration) + (f.active ? '' : ' <small>(inactive)</small>');
+      return '<tr><td>' + name + '</td><td>' + active + '</td><td>' + completed.length + '</td><td>' + fmtMoney(revenue) + '</td></tr>';
+    }).join('');
   }
 
   function renderBookings() {
