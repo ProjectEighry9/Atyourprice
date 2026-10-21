@@ -449,6 +449,13 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
       '<dt>Floor</dt><dd>' + esc(b.to_floor || '—') + (b.to_lift ? ', lift' : ', no lift') + (b.to_parking ? ', parking 20m+' : '') + '</dd>' +
       '</dl></section>' +
 
+      (b.extra_stop_address ? (
+        '<section><h3>Additional stop</h3><dl class="kv">' +
+        '<dt>Address</dt><dd>' + esc(b.extra_stop_address) + '</dd>' +
+        (b.extra_stop_note ? '<dt>Note</dt><dd>' + esc(b.extra_stop_note) + '</dd>' : '') +
+        '</dl></section>'
+      ) : '') +
+
       '<section><h3>When &amp; what</h3><dl class="kv">' +
       '<dt>Date</dt><dd>' + fmtDate(b.move_date) + '</dd>' +
       '<dt>Available</dt><dd>' + (b.availability === 'window' ? (b.window_from + '–' + b.window_to) : 'All day') + '</dd>' +

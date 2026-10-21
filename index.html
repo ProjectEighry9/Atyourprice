@@ -154,6 +154,8 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 .hint.bad{color:#8C2F23;font-weight:600}
 .agree{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--muted);margin-top:4px}
 .agree input{width:18px;height:18px;margin:3px 0 0;accent-color:var(--green);flex:none}
+.field-toggle{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin-bottom:16px;cursor:pointer}
+.field-toggle input{width:18px;height:18px;margin:3px 0 0;accent-color:var(--green);flex:none}
 .agree a{text-decoration:underline;text-underline-offset:2px}
 .form .btn{width:100%;margin-top:22px;min-height:56px;font-size:16.5px}
 .form-note{font-size:14.5px;font-weight:600;color:var(--green);margin-top:12px;min-height:1px}
@@ -421,6 +423,17 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
               <div><span class="lbl">Lift?</span><div class="seg"><label><input type="radio" name="to_lift" value="yes"><span>Yes</span></label><label><input type="radio" name="to_lift" value="no" checked><span>No</span></label></div></div>
               <div><span class="lbl">Parking over 20 m away?</span><div class="seg"><label><input type="radio" name="to_parking" value="yes"><span>Yes</span></label><label><input type="radio" name="to_parking" value="no" checked><span>No</span></label></div></div>
             </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Additional stop</legend>
+          <label class="field-toggle"><input type="checkbox" id="extra-stop-toggle" name="has_extra_stop"><span>I have another stop along the way &mdash; for example picking up from a self storage unit.</span></label>
+          <div class="grid2" id="extra-stop-row" hidden>
+            <label class="field full"><span class="lbl">Postcode and full address</span>
+              <input id="extra-stop-address" name="extra_stop_address"></label>
+            <label class="field full"><span class="lbl">What's happening there? <small>(optional)</small></span>
+              <input id="extra-stop-note" name="extra_stop_note" placeholder="e.g. collect boxes from storage"></label>
           </div>
         </fieldset>
 
@@ -723,6 +736,17 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
   });
   sync();
 
+  // The extra-stop address is only ever needed once the customer says they have one.
+  var extraStopToggle = document.getElementById('extra-stop-toggle');
+  var extraStopRow = document.getElementById('extra-stop-row');
+  var extraStopAddress = document.getElementById('extra-stop-address');
+  function syncExtraStop() {
+    extraStopRow.hidden = !extraStopToggle.checked;
+    extraStopAddress.required = extraStopToggle.checked;
+  }
+  extraStopToggle.addEventListener('change', syncExtraStop);
+  syncExtraStop();
+
   // On a github.io address the page is a draft: say so, and keep it out of search results.
   if (/\.github\.io$/.test(location.hostname)) {
     var robots = document.createElement('meta');
@@ -754,6 +778,8 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
       from_lift: d.from_lift === 'yes', from_parking: d.from_parking === 'yes',
       to_address: d.to_address, to_floor: d.to_floor || null,
       to_lift: d.to_lift === 'yes', to_parking: d.to_parking === 'yes',
+      extra_stop_address: d.has_extra_stop === 'on' ? d.extra_stop_address : null,
+      extra_stop_note: d.has_extra_stop === 'on' ? (d.extra_stop_note || null) : null,
       move_date: d.date,
       availability: d.availability,
       window_from: isWindow ? d.window_from : null,
