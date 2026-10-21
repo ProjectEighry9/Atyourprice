@@ -256,19 +256,31 @@ form.add-form .btn{width:auto;height:38px;padding:0 16px;font-size:13px}
   document.getElementById('send-code-btn').addEventListener('click', function () {
     var email = emailInput.value.trim();
     if (!email) { setMsg('Enter your email first.', 'bad'); return; }
-    this.disabled = true;
-    setMsg('Sending your code…');
-    // Say exactly where the link should return to. Left to its own default, Supabase can
-    // fall back to just the origin of the project's Site URL and drop the /admin/ path.
-    var hereNoHash = location.href.split('#')[0];
-    supabase.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true, emailRedirectTo: hereNoHash } }).then(function (res) {
-      document.getElementById('send-code-btn').disabled = false;
-      if (res.error) { setMsg(res.error.message, 'bad'); return; }
-      sentTo.textContent = email;
-      stepEmail.hidden = true;
-      stepCode.hidden = false;
-      setMsg('Check your email and open the sign-in link.', 'ok');
-      codeInput.focus();
+    var btn = this;
+    btn.disabled = true;
+    setMsg('Checking…');
+    // Office access is an allow-list (office_users). Check it before ever asking Supabase
+    // to send mail, so a stranger trying a random email never gets a code at all.
+    supabase.rpc('is_office_email', { check_email: email }).then(function (allowRes) {
+      if (allowRes.error) { btn.disabled = false; setMsg(allowRes.error.message, 'bad'); return; }
+      if (!allowRes.data) {
+        btn.disabled = false;
+        setMsg('That email is not set up for office access. Ask the owner to add it.', 'bad');
+        return;
+      }
+      setMsg('Sending your code…');
+      // Say exactly where the link should return to. Left to its own default, Supabase can
+      // fall back to just the origin of the project's Site URL and drop the /admin/ path.
+      var hereNoHash = location.href.split('#')[0];
+      supabase.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true, emailRedirectTo: hereNoHash } }).then(function (res) {
+        btn.disabled = false;
+        if (res.error) { setMsg(res.error.message, 'bad'); return; }
+        sentTo.textContent = email;
+        stepEmail.hidden = true;
+        stepCode.hidden = false;
+        setMsg('Check your email and open the sign-in link.', 'ok');
+        codeInput.focus();
+      });
     });
   });
 
