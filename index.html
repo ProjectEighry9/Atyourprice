@@ -210,6 +210,7 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
 /* advice */
 .advice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 56px;margin-top:44px}
 .advice li{padding:24px 0;border-top:1px solid var(--line)}
+.advice-ic{width:26px;height:26px;color:var(--brass);display:block;margin-bottom:10px}
 .advice h3{font-family:var(--display);font-weight:500;font-size:24px;line-height:1.2}
 .advice p{font-size:15.5px;color:var(--muted);margin-top:8px}
 
@@ -308,6 +309,27 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
     <rect x="3.5" y="3.5" width="17" height="17" rx="5"/>
     <circle cx="12" cy="12" r="4.2"/>
     <circle cx="17.2" cy="6.8" r="0.65" fill="currentColor" stroke="none"/>
+  </symbol>
+  <!-- icons for the "Our advice" cards -->
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 7.5h3l1.5-2h7l1.5 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1Z"/>
+    <circle cx="12" cy="13" r="3.3"/>
+  </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21s7-6.6 7-11.5A7 7 0 0 0 5 9.5C5 14.4 12 21 12 21Z"/>
+    <circle cx="12" cy="9.5" r="2.3"/>
+  </symbol>
+  <symbol id="i-stairs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 20v-4h4v-4h4v-4h4V4h4"/>
+    <path d="M4 20h16"/>
+  </symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.7 6.3a4 4 0 0 0-5.4 4.9L4 16.5V20h3.5l5.3-5.3a4 4 0 0 0 4.9-5.4l-2.6 2.6-2-2 2.6-2.6Z"/>
+  </symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 5 5 19"/>
+    <circle cx="7.5" cy="7.5" r="2" fill="currentColor" stroke="none"/>
+    <circle cx="16.5" cy="16.5" r="2" fill="currentColor" stroke="none"/>
   </symbol>
 </svg>
 
@@ -579,11 +601,11 @@ legend{padding:0;margin-bottom:14px;font-weight:700;font-size:12.5px;letter-spac
       <span class="eyebrow">Our advice</span>
       <h2 class="display">Before you move, <em>check five things.</em></h2>
       <ul class="advice">
-        <li><h3>Choose a registered company</h3><p>Make sure the company is listed at Companies House on GOV.UK, so a real business stands behind the job and you can always reach it.</p></li>
-        <li><h3>Agree every detail first</h3><p>Before any prepayment, agree the date and time, both addresses, the full list of items, any dismantling, the van size or an extra trip, and the number of movers.</p></li>
-        <li><h3>Check access and parking</h3><p>Narrow streets, limited parking or restricted access? Check the options in advance and tell us, so we can plan ahead.</p></li>
-        <li><h3>Travelling with your things?</h3><p>Ask in advance whether we can take one or two passengers. It depends on how many movers are in the van.</p></li>
-        <li><h3>Confirm the route</h3><p>Check whether your things go straight to the new address, or whether other collections happen on the way.</p></li>
+        <li><svg class="advice-ic" aria-hidden="true"><use href="#i-camera"/></svg><h3>Picture it for a faster yes</h3><p>Send a quick photo or video of bulky or awkward items &mdash; a sofa, wardrobe, piano &mdash; so we can price it accurately the first time, with no back-and-forth.</p></li>
+        <li><svg class="advice-ic" aria-hidden="true"><use href="#i-pin"/></svg><h3>Mention every stop</h3><p>Picking up from home and a self storage unit, or dropping off in two places? Tell us about any extra stop so the price and timing account for it from the start.</p></li>
+        <li><svg class="advice-ic" aria-hidden="true"><use href="#i-stairs"/></svg><h3>Flag stairs, lifts and parking</h3><p>The exact floor, whether there's a lift, and whether parking is more than 20 m away all change how long a job takes. Tell us upfront and we'll price it right the first time.</p></li>
+        <li><svg class="advice-ic" aria-hidden="true"><use href="#i-wrench"/></svg><h3>Say what needs taking apart</h3><p>Flat-pack wardrobes, beds or desks that need dismantling or reassembling take extra time. Let us know so it's in the price, not a surprise on the day.</p></li>
+        <li><svg class="advice-ic" aria-hidden="true"><use href="#i-coin"/></svg><h3>Keep the deposit in mind</h3><p>A 50% deposit secures your date once we say yes. The other 50% is paid after loading, before unloading &mdash; plan for both halves.</p></li>
       </ul>
     </div>
   </section>
